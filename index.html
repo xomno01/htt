@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thế Giới Hậu Tận Thế - Tương Lai Chờ Đợi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f0f0f; /* Fallback solid dark background */
+            color: #e0e0e0; /* Light text */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            cursor: none; /* Hide default cursor */
+            /* Background for all sections below Hero */
+            background-image: url('https://i.ibb.co/Dg4XcmCH/495435662-122176251986325184-8031789369453146819-n.jpg');
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #222;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Styles for the 3D transition button */
+        .menu-btn {
+            perspective: 1000px; /* Needed for 3D transforms */
+        }
+        .menu-btn span {
+            display: inline-block;
+            transform-style: preserve-3d;
+            backface-visibility: hidden; /* Hide backface during rotation */
+        }
+
+        /* Adjust Hero content for better visual appeal */
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%; /* Ensure content takes full height for centering */
+        }
+
+        /* Hero Section Specific Background (will fade out) */
+        .hero-section-bg {
+            background-image: url('https://i.ibb.co/CpbMR4WN/496097891-122176252226325184-62610792435056189-n.jpg'); /* Background 4 */
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 1; /* Start fully opaque */
+        }
+
+        /* Overlay for better text readability on Hero background */
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark overlay */
+            z-index: 0;
+        }
+
+        /* Gradient for CTA buttons */
+        .gradient-button {
+            background: linear-gradient(45deg, #ef4444, #dc2626); /* Red gradient */
+            transition: all 0.3s ease-in-out;
+        }
+        .gradient-button:hover {
+            background: linear-gradient(45deg, #dc2626, #b91c1c); /* Darker red on hover */
+            transform: scale(1.05);
+        }
+
+        /* 3D Hover for Cards */
+        .card-3d-hover {
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease-out;
+        }
+        .card-3d-hover:hover {
+            transform: rotateY(5deg) rotateX(5deg) translateZ(10px);
+        }
+
+        /* Loading spinner for LLM feature */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #fff;
+            width: 24px;
+            height: 24px;
+            -webkit-animation: spin 1s linear infinite; /* Safari */
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+
+        /* Safari */
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Custom cursor trail */
+        #cursor-trail {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white */
+            border-radius: 50%;
+            pointer-events: none; /* Allow clicks to pass through */
+            z-index: 9999; /* Ensure it's on top */
+            opacity: 0; /* Initially hidden */
+            transform: translate(-50%, -50%); /* Center the dot on the cursor */
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Custom Cursor Trail Element -->
+    <div id="cursor-trail"></div>
+
+    <header class="absolute top-0 left-0 w-full p-6 z-20 opacity-0" id="main-header">
+        <div class="container flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-white hover:text-red-400 transition-colors duration-300 header-link">Kỷ Nguyên Mới</a>
+            <nav>
+                <button class="menu-btn bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105">
+                    <span>Menu</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section - Updated for Post-Apocalyptic Theme -->
+    <section class="relative h-screen flex items-center justify-center text-center overflow-hidden">
+        <div class="hero-section-bg" id="hero-bg-layer"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content z-10 p-6 md:p-10 lg:p-16">
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-6 leading-tight text-white opacity-0 floating-element" id="hero-title">
+                Bình Minh Mới. <span class="text-red-400">Cuộc Đời Mới.</span>
+            </h1>
+            <p class="text-lg md:text-xl lg:text-2xl mb-10 text-gray-300 opacity-0" id="hero-subtitle">
+                Trong đống đổ nát, chúng ta kiến tạo tương lai.
+            </p>
+            <button class="hero-cta gradient-button text-white font-bold py-4 px-8 rounded-full shadow-lg transform transition duration-300 ease-in-out opacity-0" id="hero-cta">
+                Khám Phá Cộng Đồng
+            </button>
+        </div>
+    </section>
+
+    <!-- Features Section - Updated for Post-Apocalyptic Theme -->
+    <section class="py-20 bg-transparent text-center"> <!-- Changed bg-gray-900 to bg-transparent -->
+        <div class="container">
+            <h2 class="text-4xl md:text-5xl font-bold mb-16 text-white" id="features-title">Những Trụ Cột Của Sự Sống</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                <!-- Feature 1 -->
+                <div class="feature-item p-8 bg-gray-800 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
+                    <div class="text-red-400 text-5xl mb-6">
+                        <i class="fas fa-hammer mx-auto"></i> <!-- Font Awesome Icon -->
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4 text-white">Tái Thiết Bền Vững</h3>
+                    <p class="text-gray-400 feature-text">Xây dựng lại từ tro tàn với công nghệ thích nghi.</p>
+                </div>
+                <!-- Feature 2 -->
+                <div class="feature-item p-8 bg-gray-800 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
+                    <div class="text-red-400 text-5xl mb-6">
+                        <i class="fas fa-shield-alt mx-auto"></i> <!-- Font Awesome Icon -->
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4 text-white">Hệ Thống An Toàn</h3>
+                    <p class="text-gray-400 feature-text">Bảo vệ bạn khỏi mọi hiểm nguy trong thế giới mới.</p>
+                </div>
+                <!-- Feature 3 -->
+                <div class="feature-item p-8 bg-gray-800 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
+                    <div class="text-red-400 text-5xl mb-6">
+                        <i class="fas fa-users mx-auto"></i> <!-- Font Awesome Icon -->
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4 text-white">Kết Nối Cộng Đồng</h3>
+                    <p class="text-gray-400 feature-text">Sức mạnh nằm ở sự đoàn kết và hỗ trợ lẫn nhau.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section - Updated for Post-Apocalyptic Theme -->
+    <section class="py-20 bg-transparent text-center"> <!-- Changed bg-gray-800 to bg-transparent -->
+        <div class="container">
+            <h2 class="text-4xl md:text-5xl font-bold mb-16 text-white" id="testimonials-title">Tiếng Vọng Từ Kỷ Nguyên Mới</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-item p-8 bg-gray-700 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
+                    <p class="text-lg italic mb-6 text-gray-300 testimonial-text">"Nhờ có [Cộng đồng XYZ], chúng tôi đã tìm thấy hy vọng và nơi trú ẩn an toàn."</p>
+                    <p class="font-semibold text-white testimonial-author">- Người Sống Sót, Vùng Đất Hoang</p>
+                </div>
+                <!-- Testimonial 2 -->
+                <div class="testimonial-item p-8 bg-gray-700 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
+                    <p class="text-lg italic mb-6 text-gray-300 testimonial-text">"Sự kiên cường và tinh thần đồng đội ở đây là nguồn cảm hứng bất tận."</p>
+                    <p class="font-semibold text-white testimonial-author">- Thủ Lĩnh, Khu Vực An Toàn</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gemini API Feature: Survival Tip Generator -->
+    <section class="py-20 bg-transparent text-center"> <!-- Changed bg-gray-900 to bg-transparent -->
+        <div class="container">
+            <h2 class="text-4xl md:text-5xl font-bold mb-16 text-white" id="gemini-feature-title">✨ Lời Khuyên Sinh Tồn ✨</h2>
+            <p class="text-lg md:text-xl lg:text-2xl mb-8 text-gray-300 gemini-intro-text">
+                Nhận một mẹo hữu ích để sống sót trong thế giới hậu tận thế.
+            </p>
+            <button id="generate-tip-btn" class="gradient-button text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105 flex items-center justify-center mx-auto mb-10">
+                Tạo Mẹo Sinh Tồn
+                <span id="spinner" class="spinner hidden"></span>
+            </button>
+            <div id="survival-tip-output" class="p-8 bg-gray-800 rounded-xl shadow-lg max-w-2xl mx-auto text-lg italic text-gray-300 min-h-[100px] flex items-center justify-center text-center">
+                Nhấp vào nút để nhận lời khuyên đầu tiên của bạn!
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form Section - Updated for Post-Apocalyptic Theme -->
+    <section class="py-20 bg-transparent text-center"> <!-- Changed bg-gray-900 to bg-transparent -->
+        <div class="container">
+            <h2 class="text-4xl md:text-5xl font-bold mb-16 text-white" id="contact-title">Gia Nhập Hàng Ngũ</h2>
+            <form class="dynamic-form max-w-lg mx-auto p-8 bg-gray-800 rounded-xl shadow-lg opacity-0">
+                <div class="mb-6 text-left">
+                    <label for="name" class="block text-gray-300 text-sm font-bold mb-2">Tên của bạn:</label>
+                    <input type="text" id="name" name="name" class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white" placeholder="Chiến binh dũng cảm">
+                </div>
+                <div class="mb-6 text-left">
+                    <label for="email" class="block text-gray-300 text-sm font-bold mb-2">Email của bạn:</label>
+                    <input type="email" id="email" name="email" class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white" placeholder="email@vungdatmoi.com">
+                </div>
+                <div class="mb-6 text-left">
+                    <label for="message" class="block text-gray-300 text-sm font-bold mb-2">Tin nhắn:</label>
+                    <textarea id="message" name="message" rows="5" class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 text-white" placeholder="Kể về hành trình của bạn..."></textarea>
+                </div>
+                <button type="submit" class="gradient-button text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition duration-300 ease-in-out">
+                    Gửi Tin Nhắn
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Call to Action Section - Updated for Post-Apocalyptic Theme -->
+    <section class="py-20 bg-transparent text-white text-center"> <!-- Changed bg-red-600 to bg-transparent -->
+        <div class="container">
+            <h2 class="text-4xl md:text-5xl font-bold mb-8" id="cta-title">Tương Lai Bắt Đầu Từ Đây</h2>
+            <p class="text-xl mb-10 opacity-0" id="cta-subtitle">
+                Hãy cùng chúng tôi viết nên chương mới của nhân loại.
+            </p>
+            <button class="cta-button gradient-button text-white font-bold py-4 px-10 rounded-full shadow-lg transform transition duration-300 ease-in-out opacity-0" id="cta-button">
+                Gia Nhập Ngay
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer - Updated for Post-Apocalyptic Theme -->
+    <footer class="py-10 bg-gray-950 text-gray-400 text-center text-sm opacity-0" id="main-footer">
+        <div class="container">
+            <p>&copy; 2025 Kỷ Nguyên Mới. Mọi quyền được bảo reserved.</p>
+            <p class="mt-2">
+                <a href="#" class="hover:text-white mx-2 footer-link">Chính sách bảo mật</a> |
+                <a href="#" class="hover:text-white mx-2 footer-link">Điều khoản sử dụng</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Register ScrollTrigger plugin
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Custom Cursor Trail
+        const cursorTrail = document.getElementById('cursor-trail');
+        let mouseX = 0;
+        let mouseY = 0;
+
+        // Set initial position of cursor trail
+        gsap.set(cursorTrail, { xPercent: -50, yPercent: -50 });
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            gsap.to(cursorTrail, {
+                x: mouseX,
+                y: mouseY,
+                duration: 0.3, // Smoothness of follow
+                ease: "power2.out",
+                opacity: 1, // Make it visible
+            });
+        });
+
+        // Hide cursor trail when mouse leaves window
+        window.addEventListener('mouseleave', () => {
+            gsap.to(cursorTrail, { opacity: 0, duration: 0.5 });
+        });
+        window.addEventListener('mouseenter', () => {
+            gsap.to(cursorTrail, { opacity: 1, duration: 0.5 });
+        });
+
+
+        // GSAP Animations
+        function setupGSAPAnimations() {
+            // Header Entrance Animation
+            gsap.fromTo("#main-header", { y: -50, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "power3.out", delay: 0.2 });
+
+            // Hero Section Entrance Animations
+            gsap.fromTo("#hero-title", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" });
+            gsap.fromTo("#hero-subtitle", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, delay: 0.3, ease: "power3.out" });
+            
+            // Hero CTA Button Hover with 3D animation
+            const heroCta = document.getElementById('hero-cta');
+            gsap.set(heroCta, { transformStyle: "preserve-3d" }); // Ensure 3D context for the button
+
+            // The hover effect is now handled by CSS .gradient-button:hover
+            gsap.fromTo(heroCta, { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 1, delay: 0.6, ease: "back.out(1.7)" });
+
+
+            // Floating Animation for Hero Title
+            gsap.to(".floating-element", {
+                y: -10, // Move up by 10px
+                x: 5,   // Move right by 5px
+                rotation: 2, // Rotate slightly
+                repeat: -1, // Repeat indefinitely
+                yoyo: true, // Go back and forth
+                duration: 3, // Duration of one cycle
+                ease: "sine.inOut", // Smooth easing
+            });
+
+            // Parallax effect for Hero content
+            gsap.to(".hero-content", {
+                yPercent: -10, // Move content up by 10% of its height relative to scroll
+                ease: "none",
+                scrollTrigger: {
+                    trigger: ".hero-section-bg",
+                    start: "top top",
+                    end: "bottom top", // Ends when the bottom of the trigger hits the top of the viewport
+                    scrub: 0.5, // Smoothly scrub animation based on scroll
+                }
+            });
+
+            // Background transition: Fade out hero-section-bg as it scrolls out of view
+            gsap.to("#hero-bg-layer", {
+                opacity: 0,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: ".hero-section-bg",
+                    start: "center center", // Start fading when the center of hero-bg-layer hits the center of viewport
+                    end: "bottom top", // End fading when the bottom of hero-bg-layer hits the top of viewport
+                    scrub: 1, // Smoothly scrub animation based on scroll
+                }
+            });
+
+
+            // Features Section Animations (Scroll-triggered)
+            gsap.from("#features-title", {
+                y: 50, opacity: 0, duration: 1, ease: "power3.out",
+                scrollTrigger: {
+                    trigger: "#features-title",
+                    start: "top 80%",
+                    toggleActions: "play none none none",
+                }
+            });
+            gsap.utils.toArray(".feature-item").forEach((item, i) => {
+                gsap.fromTo(item,
+                    { y: 50, opacity: 0 },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        duration: 1,
+                        ease: "power3.out",
+                        scrollTrigger: {
+                            trigger: item,
+                            start: "top 80%",
+                            toggleActions: "play none none none",
+                        }
+                    }
+                );
+            });
+            // Feature text animation
+            gsap.utils.toArray(".feature-text").forEach((text, i) => {
+                gsap.fromTo(text,
+                    { y: 20, opacity: 0 },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        duration: 0.8,
+                        delay: 0.2, // Appear after feature item
+                        ease: "power2.out",
+                        scrollTrigger: {
+                            trigger: text,
+                            start: "top 90%",
+                            toggleActions: "play none none none",
+                        }
+                    }
+                );
+            });
+
+            // Testimonials Section Animations (Scroll-triggered)
+            gsap.from("#testimonials-title", {
+                y: 50, opacity: 0, duration: 1, ease: "power3.out",
+                scrollTrigger: {
+                    trigger: "#testimonials-title",
+                    start: "top 80%",
+                    toggleActions: "play none none none",
+                }
+            });
+            gsap.utils.toArray(".testimonial-item").forEach((item, i) => {
+                gsap.fromTo(item,
+                    { y: 50, opacity: 0 },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        duration: 1,
+                        ease: "power3.out",
+                        scrollTrigger: {
+                            trigger: item,
+                            start: "top 80%",
+                            toggleActions: "play none none none",
+                        }
+                    }
+                );
+            });
+            // Testimonial text and author animation
+            gsap.utils.toArray(".testimonial-text, .testimonial-author").forEach((text, i) => {
+                gsap.fromTo(text,
+                    { y: 20, opacity: 0 },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        duration: 0.8,
+                        delay: 0.2, // Appear after testimonial item
+                        ease: "power2.out",
+                        scrollTrigger: {
+                            trigger: text,
+                            start: "top 90%",
+                            toggleActions: "play none none none",
+                        }
+                    }
+                );
+            });
+
+            // Gemini API Feature Animations (Scroll-triggered)
+            gsap.from("#gemini-feature-title", {
+                y: 50, opacity: 0, duration: 1, ease: "power3.out",
+                scrollTrigger: {
+                    trigger: "#gemini-feature-title",
+                    start: "top 80%",
+                    toggleActions: "play none none none",
+                }
+            });
+            gsap.from(".gemini-intro-text", {
+                y: 50, opacity: 0, duration: 1, delay: 0.2, ease: "power3.out",
+                scrollTrigger: {
+                    trigger: ".gemini-intro-text",
+                    start: "top 80%",
+                    toggleActions: "play none none none",
+                }
+            });
+            gsap.from("#generate-tip-btn", {
+                y: 50, opacity: 0, duration: 1, delay: 0.4, ease: "power3.out",
+                scrollTrigger: {
+                    trigger: "#generate-tip-btn",
+                    start: "top 80%",
+                    toggleActions: "play none none none",
+                }
+            });
+            gsap.from("#survival-tip-output", {
+                y: 50, opacity: 0, duration: 1, delay: 0.6, ease: "power3.out",
+                scrollTrigger: {
+                    trigger: "#survival-tip-output",
+                    start: "top 80%",
+                    toggleActions: "play none none none",
+                }
+            });
+
+
+            // Contact Form Section Animations (Scroll-triggered Dynamic Form)
+            gsap.from("#contact-title", {
+                y: 50, opacity: 0, duration: 1, ease: "power3.out",
+                scrollTrigger: {
+                    trigger: "#contact-title",
+                    start: "top 80%",
+                    toggleActions: "play none none none",
+                }
+            });
+            gsap.from(".dynamic-form", {
+                y: 50, opacity: 0, duration: 1, ease: "power3.out",
+                scrollTrigger: {
+                    trigger: ".dynamic-form",
+                    start: "top 80%",
+                    toggleActions: "play none none none",
+                }
+            });
+            gsap.from(".dynamic-form input, .dynamic-form textarea, .dynamic-form button", {
+                x: (i, target) => (i % 2 === 0 ? -50 : 50), // Animate from left/right alternately
+                opacity: 0,
+                duration: 0.7,
+                ease: "power3.out",
+                stagger: 0.1, // Stagger the animation of each input
+                scrollTrigger: {
+                    trigger: ".dynamic-form",
+                    start: "top 70%", // Trigger when form is more in view
+                    toggleActions: "play none none none",
+                }
+            });
+
+
+            // CTA Section Animations (Scroll-triggered)
+            gsap.fromTo("#cta-title", { y: 50, opacity: 0 }, {
+                y: 0,
+                opacity: 1,
+                duration: 1,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: "#cta-title",
+                    start: "top 80%",
+                    toggleActions: "play none none none",
+                }
+            });
+            gsap.fromTo("#cta-subtitle", { y: 50, opacity: 0 }, {
+                y: 0,
+                opacity: 1,
+                duration: 1,
+                delay: 0.2,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: "#cta-subtitle",
+                    start: "top 80%",
+                    toggleActions: "play none none none",
+                }
+            });
+            gsap.fromTo(".cta-button", { scale: 0.8, opacity: 0 }, {
+                scale: 1,
+                opacity: 1,
+                duration: 1,
+                delay: 0.4,
+                ease: "back.out(1.7)",
+                scrollTrigger: {
+                    trigger: ".cta-button",
+                    start: "top 80%",
+                    toggleActions: "play none none none",
+                }
+            });
+
+            // Footer Entrance Animation
+            gsap.fromTo("#main-footer", { y: 50, opacity: 0 }, {
+                y: 0,
+                opacity: 1,
+                duration: 1,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: "#main-footer",
+                    start: "top 90%",
+                    toggleActions: "play none none none",
+                }
+            });
+
+            // 3D Transition for Menu Button
+            const menuBtn = document.querySelector('.menu-btn');
+            const menuBtnSpan = menuBtn.querySelector('span');
+
+            menuBtn.addEventListener('click', () => {
+                // Simulate opening/closing a menu with a 3D flip
+                if (gsap.isTweening(menuBtnSpan)) return; // Prevent re-triggering while animating
+
+                if (menuBtnSpan.dataset.flipped === 'true') {
+                    // Flip back
+                    gsap.to(menuBtnSpan, {
+                        duration: 0.5,
+                        rotateY: 0,
+                        y: 0,
+                        opacity: 1,
+                        ease: "power4.out",
+                        onComplete: () => {
+                            menuBtnSpan.textContent = "Menu";
+                            menuBtnSpan.dataset.flipped = 'false';
+                        }
+                    });
+                } else {
+                    // Flip forward
+                    gsap.to(menuBtnSpan, {
+                        duration: 0.5,
+                        rotateY: 180,
+                        y: -50, // Move up slightly during flip
+                        opacity: 0,
+                        ease: "power4.out",
+                        onComplete: () => {
+                            menuBtnSpan.textContent = "Close"; // Change text after flip
+                            gsap.set(menuBtnSpan, { rotateY: -180, y: 50, opacity: 0 }); // Reset for reverse animation
+                            gsap.to(menuBtnSpan, {
+                                duration: 0.5,
+                                rotateY: 0,
+                                y: 0,
+                                opacity: 1,
+                                ease: "power4.out"
+                            });
+                            menuBtnSpan.dataset.flipped = 'true';
+                        }
+                    });
+                }
+            });
+
+            // Hover effects for header and footer links
+            gsap.utils.toArray(".header-link, .footer-link").forEach(link => {
+                link.addEventListener('mouseenter', () => {
+                    gsap.to(link, { color: "#ef4444", y: -3, duration: 0.2, ease: "power1.out" });
+                });
+                link.addEventListener('mouseleave', () => {
+                    gsap.to(link, { color: "#e0e0e0", y: 0, duration: 0.2, ease: "power1.out" });
+                });
+            });
+        }
+
+        // Gemini API Integration
+        async function generateSurvivalTip() {
+            const outputDiv = document.getElementById('survival-tip-output');
+            const generateBtn = document.getElementById('generate-tip-btn');
+            const spinner = document.getElementById('spinner');
+
+            outputDiv.textContent = 'Đang tạo lời khuyên...';
+            generateBtn.disabled = true; // Disable button during generation
+            spinner.classList.remove('hidden'); // Show spinner
+
+            let chatHistory = [];
+            const prompt = "Hãy đưa ra một lời khuyên sinh tồn ngắn gọn và thực tế cho một thế giới hậu tận thế. Lời khuyên nên tập trung vào một khía cạnh cụ thể như tìm kiếm tài nguyên, an toàn, hoặc kỹ năng sinh tồn. Chỉ trả lời lời khuyên, không có lời giới thiệu hay kết thúc.";
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // Canvas will automatically provide the API key
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    outputDiv.textContent = text;
+                } else {
+                    outputDiv.textContent = 'Không thể tạo lời khuyên. Vui lòng thử lại.';
+                    console.error('Unexpected API response structure:', result);
+                }
+            } catch (error) {
+                outputDiv.textContent = 'Đã xảy ra lỗi khi kết nối API. Vui lòng thử lại sau.';
+                console.error('Error calling Gemini API:', error);
+            } finally {
+                generateBtn.disabled = false; // Re-enable button
+                spinner.classList.add('hidden'); // Hide spinner
+            }
+        }
+
+        // Attach event listener to the generate tip button
+        document.addEventListener('DOMContentLoaded', () => {
+            const generateBtn = document.getElementById('generate-tip-btn');
+            if (generateBtn) {
+                generateBtn.addEventListener('click', generateSurvivalTip);
+            }
+        });
+
+
+        // Initialize GSAP when the window loads
+        window.onload = function() {
+            setupGSAPAnimations();
+        };
+    </script>
+</body>
+</html>
