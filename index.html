@@ -9,6 +9,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- UPDATED: Lottie Player Script -->
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -44,7 +46,6 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #cursor-trail { position: fixed; width: 10px; height: 10px; background-color: rgba(255, 255, 255, 0.5); border-radius: 50%; pointer-events: none; z-index: 9999; opacity: 0; transform: translate(-50%, -50%); }
 
-        /* --- UPDATED: FLOATING BUBBLES GALLERY STYLES --- */
         #gallery-bubble-container {
             position: relative;
             width: 100%;
@@ -73,7 +74,7 @@
              box-shadow: 0 0 25px rgba(255, 100, 100, 0.8), 
                         0 0 50px rgba(239, 68, 68, 0.5), 
                         inset 0 0 15px rgba(255,255,255,0.3);
-             transform: scale(1.15) !important; /* Ensure hover scale overrides animation */
+             transform: scale(1.15) !important;
         }
 
         .bubble-card img {
@@ -87,7 +88,6 @@
             transform: scale(1.1);
         }
 
-        /* --- UPDATED: LIGHTBOX STYLES --- */
         #lightbox {
             position: fixed; inset: 0; z-index: 9999;
             background-color: rgba(0, 0, 0, 0.85);
@@ -126,6 +126,11 @@
 </head>
 <body class="antialiased">
 
+    <!-- UPDATED: Preloader Element -->
+    <div id="preloader" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/90 backdrop-blur-sm">
+        <dotlottie-wc src="https://lottie.host/4f3a4b4a-dc5e-4b81-ac62-0b7608e8e0eb/8ffk8U9vkz.lottie" style="width: 300px;height: 300px" speed="1" autoplay loop></dotlottie-wc>
+    </div>
+
     <div id="cursor-trail"></div>
 
     <!-- Header and other sections remain the same -->
@@ -151,7 +156,7 @@
                 Trong đống đổ nát, chúng ta kiến tạo tương lai.
             </p>
             <button class="hero-cta gradient-button text-white font-bold py-4 px-8 rounded-full shadow-lg transform transition duration-300 ease-in-out opacity-0" id="hero-cta">
-                Khám Phá 
+                Khám Phá Cộng Đồng
             </button>
         </div>
     </section>
@@ -179,7 +184,6 @@
         </div>
     </section>
 
-    <!-- UPDATED: FLOATING BUBBLES GALLERY SECTION -->
     <section class="py-20 bg-transparent">
         <div class="container">
             <h2 class="text-4xl md:text-5xl font-bold mb-8 text-white text-center" id="gallery-title">Thư Viện Huyền Ảo</h2>
@@ -190,7 +194,6 @@
         </div>
     </section>
 
-    <!-- Other sections remain the same -->
     <section class="py-20 bg-transparent text-center">
         <div class="container">
             <h2 class="text-4xl md:text-5xl font-bold mb-16 text-white" id="testimonials-title">Tiếng Vọng Từ Kỷ Nguyên Mới</h2>
@@ -236,6 +239,12 @@
         <img id="lightbox-img" src="" alt="Hình ảnh phóng to">
         <button id="lightbox-next" class="lightbox-nav" title="Ảnh kế tiếp"><i class="fas fa-chevron-right"></i></button>
     </div>
+
+    <!-- Music Player Elements -->
+    <audio id="background-music" loop></audio>
+    <button id="music-control" class="fixed bottom-5 right-5 z-50 w-12 h-12 bg-red-600/70 text-white rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm hover:bg-red-500 transition-all duration-300" title="Bật/Tắt nhạc">
+        <i class="fas fa-play"></i>
+    </button>
 
     <script>
         gsap.registerPlugin(ScrollTrigger);
@@ -289,7 +298,7 @@
             gsap.fromTo("#main-footer", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "power3.out", scrollTrigger: { trigger: "#main-footer", start: "top 95%", toggleActions: "play none none none" } });
         }
 
-        // --- UPDATED: FLOATING BUBBLES GALLERY & LIGHTBOX LOGIC ---
+        // --- FLOATING BUBBLES GALLERY & LIGHTBOX LOGIC ---
         function setupBubbleGallery() {
             const container = document.getElementById('gallery-bubble-container');
             const lightbox = document.getElementById('lightbox');
@@ -305,7 +314,6 @@
             let currentIndex = 0;
             let slideshowTimer = null;
 
-            // 1. Populate the gallery and create animations
             galleryImages.forEach((image, index) => {
                 const bubbleSize = Math.random() * 100 + 100;
                 const card = document.createElement('div');
@@ -322,7 +330,6 @@
                 
                 container.appendChild(card);
 
-                // --- NEW WANDERING ANIMATION LOGIC ---
                 function wander(target) {
                     gsap.to(target, {
                         x: gsap.utils.random(0, containerWidth - target.offsetWidth),
@@ -330,25 +337,21 @@
                         rotation: gsap.utils.random(-20, 20),
                         duration: gsap.utils.random(10, 18),
                         ease: "sine.inOut",
-                        onComplete: () => wander(target) // Recursively call wander for continuous movement
+                        onComplete: () => wander(target)
                     });
                 }
-                wander(card); // Start the animation
+                wander(card);
 
-                // Add hover interaction
                 card.addEventListener('mouseenter', () => {
-                    // Pause the wandering animation for this specific bubble
                     gsap.getTweensOf(card)[0].pause();
                 });
                 card.addEventListener('mouseleave', () => {
-                     // Resume the wandering animation
                     gsap.getTweensOf(card)[0].resume();
                 });
             });
 
             const cards = document.querySelectorAll(".bubble-card");
 
-            // 2. Lightbox functionality
             const stopSlideshow = () => {
                 if (slideshowTimer) clearInterval(slideshowTimer);
                 slideshowTimer = null;
@@ -437,20 +440,82 @@
                 spinner.classList.add('hidden');
             }
         }
+        
+        // --- MUSIC PLAYER LOGIC ---
+        function setupMusicPlayer() {
+            const musicSources = [
+                'https://raw.githubusercontent.com/xomno01/htt/d60317fd59ea14a16ae5e4c513f80949ce0f5300/assets/kinh-di.mp3',
+                'https://raw.githubusercontent.com/xomno01/htt/d60317fd59ea14a16ae5e4c513f80949ce0f5300/assets/kinh-di-1.mp3'
+            ];
+            const audioPlayer = document.getElementById('background-music');
+            const musicButton = document.getElementById('music-control');
+            const musicIcon = musicButton.querySelector('i');
+
+            const chosenMusic = musicSources[Math.floor(Math.random() * musicSources.length)];
+            audioPlayer.src = chosenMusic;
+
+            let isPlaying = false;
+
+            function toggleMusic() {
+                // We need a user interaction to start audio playback reliably.
+                const playPromise = audioPlayer.play();
+
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                        // Autoplay started!
+                        isPlaying = true;
+                        musicIcon.classList.remove('fa-play');
+                        musicIcon.classList.add('fa-pause');
+                        
+                        // Now set up the actual toggle logic
+                        musicButton.onclick = () => {
+                            if (audioPlayer.paused) {
+                                audioPlayer.play();
+                                musicIcon.classList.remove('fa-play');
+                                musicIcon.classList.add('fa-pause');
+                            } else {
+                                audioPlayer.pause();
+                                musicIcon.classList.remove('fa-pause');
+                                musicIcon.classList.add('fa-play');
+                            }
+                        };
+                    }).catch(error => {
+                        // Autoplay was prevented.
+                        // We'll just set up the click listener to try playing on the first click.
+                        musicButton.onclick = toggleMusic;
+                    });
+                }
+            }
+            
+            musicButton.addEventListener('click', toggleMusic, { once: true });
+        }
 
         // --- INITIALIZATION ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // A short delay to ensure container dimensions are calculated correctly
-            setTimeout(() => {
-                setupPageAnimations();
-                setupBubbleGallery();
-            }, 100);
+        // UPDATED: Use window.onload to ensure all assets are loaded before starting animations.
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
             
-            const generateBtn = document.getElementById('generate-tip-btn');
-            if (generateBtn) {
-                generateBtn.addEventListener('click', generateSurvivalTip);
-            }
+            gsap.to(preloader, {
+                opacity: 0,
+                duration: 1.5,
+                delay: 0.5, // A short delay to let the Lottie animation play a bit
+                ease: 'power2.out',
+                onComplete: () => {
+                    preloader.style.display = 'none';
+                    
+                    // Now that the page is visible, run all setups
+                    setupPageAnimations();
+                    setupBubbleGallery();
+                    setupMusicPlayer();
+
+                    const generateBtn = document.getElementById('generate-tip-btn');
+                    if (generateBtn) {
+                        generateBtn.addEventListener('click', generateSurvivalTip);
+                    }
+                }
+            });
         });
+
     </script>
 </body>
 </html>
