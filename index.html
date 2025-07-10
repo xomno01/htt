@@ -9,7 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- UPDATED: Lottie Player Script -->
+    <!-- Lottie Player Script -->
     <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module"></script>
     <style>
         body {
@@ -49,7 +49,7 @@
         #gallery-bubble-container {
             position: relative;
             width: 100%;
-            height: 650px;
+            height: 500px; /* Adjusted height for better mobile view */
             margin-top: 2rem;
             overflow: hidden;
             border-radius: 1rem;
@@ -57,6 +57,12 @@
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255,255,255,0.1);
         }
+        @media (min-width: 768px) {
+            #gallery-bubble-container {
+                height: 650px;
+            }
+        }
+
 
         .bubble-card {
             position: absolute;
@@ -65,7 +71,7 @@
             cursor: pointer;
             will-change: transform;
             border: 2px solid rgba(255, 255, 255, 0.3);
-            transition: box-shadow 0.4s ease, transform 0.3s ease;
+            transition: box-shadow 0.4s ease;
             box-shadow: 0 0 15px rgba(255, 100, 100, 0.4), 
                         0 0 30px rgba(239, 68, 68, 0.2), 
                         inset 0 0 10px rgba(255,255,255,0.1);
@@ -74,7 +80,6 @@
              box-shadow: 0 0 25px rgba(255, 100, 100, 0.8), 
                         0 0 50px rgba(239, 68, 68, 0.5), 
                         inset 0 0 15px rgba(255,255,255,0.3);
-             transform: scale(1.15) !important;
         }
 
         .bubble-card img {
@@ -98,7 +103,7 @@
         }
         #lightbox.visible { opacity: 1; pointer-events: all; }
         #lightbox-img {
-            max-width: 85vw; max-height: 85vh; object-fit: contain;
+            max-width: 90vw; max-height: 90vh; object-fit: contain;
             border-radius: 1rem;
             box-shadow: 0 0 80px rgba(255, 82, 82, 0.3);
             transform: scale(0.8);
@@ -108,15 +113,15 @@
         .lightbox-nav {
             position: absolute; top: 50%; transform: translateY(-50%);
             background-color: rgba(0,0,0,0.3); color: white; border: none;
-            border-radius: 50%; width: 50px; height: 50px; font-size: 1.5rem;
+            border-radius: 50%; width: 44px; height: 44px; font-size: 1.25rem;
             cursor: pointer; display: flex; justify-content: center; align-items: center;
             transition: background-color 0.3s ease, transform 0.3s ease;
         }
         .lightbox-nav:hover { background-color: rgba(239, 68, 68, 0.8); transform: translateY(-50%) scale(1.1); }
-        #lightbox-prev { left: 2rem; }
-        #lightbox-next { right: 2rem; }
+        #lightbox-prev { left: 1rem; }
+        #lightbox-next { right: 1rem; }
         #lightbox-close {
-            position: absolute; top: 1.5rem; right: 1.5rem; font-size: 2.5rem;
+            position: absolute; top: 1rem; right: 1rem; font-size: 2rem;
             color: white; background: none; border: none; cursor: pointer;
             line-height: 1; transition: transform 0.3s ease, color 0.3s ease; z-index: 10000;
         }
@@ -126,19 +131,19 @@
 </head>
 <body class="antialiased">
 
-    <!-- UPDATED: Preloader Element -->
+    <!-- Preloader Element -->
     <div id="preloader" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/90 backdrop-blur-sm">
         <dotlottie-wc src="https://lottie.host/4f3a4b4a-dc5e-4b81-ac62-0b7608e8e0eb/8ffk8U9vkz.lottie" style="width: 300px;height: 300px" speed="1" autoplay loop></dotlottie-wc>
     </div>
 
-    <div id="cursor-trail"></div>
+    <div id="cursor-trail" class="hidden md:block"></div>
 
     <!-- Header and other sections remain the same -->
-    <header class="absolute top-0 left-0 w-full p-6 z-20 opacity-0" id="main-header">
+    <header class="absolute top-0 left-0 w-full p-4 md:p-6 z-20 opacity-0" id="main-header">
         <div class="container flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-white hover:text-red-400 transition-colors duration-300 header-link">Kỷ Nguyên Mới</a>
+            <a href="#" class="text-xl md:text-2xl font-bold text-white hover:text-red-400 transition-colors duration-300 header-link">Kỷ Nguyên Mới</a>
             <nav>
-                <button class="menu-btn bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105">
+                <button class="menu-btn bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105 text-sm md:text-base">
                     <span>Menu</span>
                 </button>
             </nav>
@@ -148,45 +153,46 @@
     <section class="relative h-screen flex items-center justify-center text-center overflow-hidden">
         <div class="hero-section-bg" id="hero-bg-layer"></div>
         <div class="hero-overlay"></div>
-        <div class="hero-content z-10 p-6 md:p-10 lg:p-16">
-            <h1 class="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-6 leading-tight text-white opacity-0 floating-element" id="hero-title">
+        <div class="hero-content z-10 p-4">
+            <h1 class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold mb-4 md:mb-6 leading-tight text-white opacity-0 floating-element" id="hero-title">
                 Bình Minh Mới. <span class="text-red-400">Cuộc Đời Mới.</span>
             </h1>
-            <p class="text-lg md:text-xl lg:text-2xl mb-10 text-gray-300 opacity-0" id="hero-subtitle">
+            <p class="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 md:mb-10 text-gray-300 opacity-0" id="hero-subtitle">
                 Trong đống đổ nát, chúng ta kiến tạo tương lai.
             </p>
-            <button class="hero-cta gradient-button text-white font-bold py-4 px-8 rounded-full shadow-lg transform transition duration-300 ease-in-out opacity-0" id="hero-cta">
+            <button class="hero-cta gradient-button text-white font-bold py-3 px-6 md:py-4 md:px-8 rounded-full shadow-lg transform transition duration-300 ease-in-out opacity-0" id="hero-cta">
                 Khám Phá Cộng Đồng
             </button>
         </div>
     </section>
 
-    <section class="py-20 bg-transparent text-center">
+    <section class="py-16 md:py-20 bg-transparent text-center">
         <div class="container">
-            <h2 class="text-4xl md:text-5xl font-bold mb-16 text-white" id="features-title">Những Trụ Cột Của Sự Sống</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-                <div class="feature-item p-8 bg-gray-800 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
-                    <div class="text-red-400 text-5xl mb-6"><i class="fas fa-hammer mx-auto"></i></div>
-                    <h3 class="text-2xl font-semibold mb-4 text-white">Tái Thiết Bền Vững</h3>
+            <h2 class="text-3xl md:text-5xl font-bold mb-12 md:mb-16 text-white" id="features-title">Những Trụ Cột Của Sự Sống</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+                <!-- Features items are already responsive -->
+                <div class="feature-item p-6 md:p-8 bg-gray-800 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
+                    <div class="text-red-400 text-4xl md:text-5xl mb-6"><i class="fas fa-hammer mx-auto"></i></div>
+                    <h3 class="text-xl md:text-2xl font-semibold mb-4 text-white">Tái Thiết Bền Vững</h3>
                     <p class="text-gray-400 feature-text">Xây dựng lại từ tro tàn với công nghệ thích nghi.</p>
                 </div>
-                <div class="feature-item p-8 bg-gray-800 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
-                    <div class="text-red-400 text-5xl mb-6"><i class="fas fa-shield-alt mx-auto"></i></div>
-                    <h3 class="text-2xl font-semibold mb-4 text-white">Hệ Thống An Toàn</h3>
+                <div class="feature-item p-6 md:p-8 bg-gray-800 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
+                    <div class="text-red-400 text-4xl md:text-5xl mb-6"><i class="fas fa-shield-alt mx-auto"></i></div>
+                    <h3 class="text-xl md:text-2xl font-semibold mb-4 text-white">Hệ Thống An Toàn</h3>
                     <p class="text-gray-400 feature-text">Bảo vệ bạn khỏi mọi hiểm nguy trong thế giới mới.</p>
                 </div>
-                <div class="feature-item p-8 bg-gray-800 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
-                    <div class="text-red-400 text-5xl mb-6"><i class="fas fa-users mx-auto"></i></div>
-                    <h3 class="text-2xl font-semibold mb-4 text-white">Kết Nối Cộng Đồng</h3>
+                <div class="feature-item p-6 md:p-8 bg-gray-800 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
+                    <div class="text-red-400 text-4xl md:text-5xl mb-6"><i class="fas fa-users mx-auto"></i></div>
+                    <h3 class="text-xl md:text-2xl font-semibold mb-4 text-white">Kết Nối Cộng Đồng</h3>
                     <p class="text-gray-400 feature-text">Sức mạnh nằm ở sự đoàn kết và hỗ trợ lẫn nhau.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-20 bg-transparent">
+    <section class="py-16 md:py-20 bg-transparent">
         <div class="container">
-            <h2 class="text-4xl md:text-5xl font-bold mb-8 text-white text-center" id="gallery-title">Ký Ức Lang Thang</h2>
+            <h2 class="text-3xl md:text-5xl font-bold mb-8 text-white text-center" id="gallery-title">Thư Viện Huyền Ảo</h2>
             <p class="text-center text-gray-400 mb-8 max-w-2xl mx-auto">Chạm vào những ký ức trôi nổi để khám phá. Nhấp vào một bong bóng để xem chi tiết.</p>
             <div id="gallery-bubble-container">
                 <!-- Bubble cards will be dynamically added here by JS -->
@@ -194,33 +200,34 @@
         </div>
     </section>
 
-    <section class="py-20 bg-transparent text-center">
+    <section class="py-16 md:py-20 bg-transparent text-center">
         <div class="container">
-            <h2 class="text-4xl md:text-5xl font-bold mb-16 text-white" id="testimonials-title">Tiếng Vọng Từ Kỷ Nguyên Mới</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div class="testimonial-item p-8 bg-gray-700 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
-                    <p class="text-lg italic mb-6 text-gray-300 testimonial-text">"Nhờ có [Cộng đồng XYZ], chúng tôi đã tìm thấy hy vọng và nơi trú ẩn an toàn."</p>
+            <h2 class="text-3xl md:text-5xl font-bold mb-12 md:mb-16 text-white" id="testimonials-title">Tiếng Vọng Từ Kỷ Nguyên Mới</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                 <!-- Testimonials are already responsive -->
+                <div class="testimonial-item p-6 md:p-8 bg-gray-700 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
+                    <p class="text-base md:text-lg italic mb-6 text-gray-300 testimonial-text">"Nhờ có [Cộng đồng XYZ], chúng tôi đã tìm thấy hy vọng và nơi trú ẩn an toàn."</p>
                     <p class="font-semibold text-white testimonial-author">- Người Sống Sót, Vùng Đất Hoang</p>
                 </div>
-                <div class="testimonial-item p-8 bg-gray-700 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
-                    <p class="text-lg italic mb-6 text-gray-300 testimonial-text">"Sự kiên cường và tinh thần đồng đội ở đây là nguồn cảm hứng bất tận."</p>
+                <div class="testimonial-item p-6 md:p-8 bg-gray-700 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
+                    <p class="text-base md:text-lg italic mb-6 text-gray-300 testimonial-text">"Sự kiên cường và tinh thần đồng đội ở đây là nguồn cảm hứng bất tận."</p>
                     <p class="font-semibold text-white testimonial-author">- Thủ Lĩnh, Khu Vực An Toàn</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-20 bg-transparent text-center">
+    <section class="py-16 md:py-20 bg-transparent text-center">
         <div class="container">
-            <h2 class="text-4xl md:text-5xl font-bold mb-16 text-white" id="gemini-feature-title">✨ Lời Khuyên Sinh Tồn ✨</h2>
-            <p class="text-lg md:text-xl lg:text-2xl mb-8 text-gray-300 gemini-intro-text">
+            <h2 class="text-3xl md:text-5xl font-bold mb-12 md:mb-16 text-white" id="gemini-feature-title">✨ Lời Khuyên Sinh Tồn ✨</h2>
+            <p class="text-base md:text-lg lg:text-xl mb-8 text-gray-300 gemini-intro-text">
                 Nhận một mẹo hữu ích để sống sót trong thế giới hậu tận thế.
             </p>
             <button id="generate-tip-btn" class="gradient-button text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105 flex items-center justify-center mx-auto mb-10">
                 Tạo Mẹo Sinh Tồn
                 <span id="spinner" class="spinner hidden"></span>
             </button>
-            <div id="survival-tip-output" class="p-8 bg-gray-800 rounded-xl shadow-lg max-w-2xl mx-auto text-lg italic text-gray-300 min-h-[100px] flex items-center justify-center text-center">
+            <div id="survival-tip-output" class="p-6 md:p-8 bg-gray-800 rounded-xl shadow-lg max-w-2xl mx-auto text-base md:text-lg italic text-gray-300 min-h-[100px] flex items-center justify-center text-center">
                 Nhấp vào nút để nhận lời khuyên đầu tiên của bạn!
             </div>
         </div>
@@ -267,11 +274,17 @@
 
         // --- CUSTOM CURSOR ---
         const cursorTrail = document.getElementById('cursor-trail');
-        gsap.set(cursorTrail, { xPercent: -50, yPercent: -50 });
-        window.addEventListener('mousemove', (e) => {
-            gsap.to(cursorTrail, { x: e.clientX, y: e.clientY, duration: 0.3, ease: "power2.out", opacity: 1 });
-        });
-        window.addEventListener('mouseleave', () => gsap.to(cursorTrail, { opacity: 0, duration: 0.5 }));
+        // Hide cursor on touch devices
+        if (!('ontouchstart' in window)) {
+            gsap.set(cursorTrail, { xPercent: -50, yPercent: -50 });
+            window.addEventListener('mousemove', (e) => {
+                gsap.to(cursorTrail, { x: e.clientX, y: e.clientY, duration: 0.3, ease: "power2.out", opacity: 1 });
+            });
+            window.addEventListener('mouseleave', () => gsap.to(cursorTrail, { opacity: 0, duration: 0.5 }));
+        } else {
+             document.body.style.cursor = 'auto'; // Show default cursor on touch devices
+        }
+
 
         // --- GSAP PAGE ANIMATIONS ---
         function setupPageAnimations() {
@@ -309,13 +322,16 @@
 
             if (!container) return;
             
-            const containerWidth = container.offsetWidth;
-            const containerHeight = container.offsetHeight;
+            let containerWidth = container.offsetWidth;
+            let containerHeight = container.offsetHeight;
             let currentIndex = 0;
             let slideshowTimer = null;
 
+            // Clear any existing bubbles before creating new ones (for resize)
+            container.innerHTML = '';
+
             galleryImages.forEach((image, index) => {
-                const bubbleSize = Math.random() * 100 + 100;
+                const bubbleSize = Math.random() * 80 + 60; // Slightly smaller bubbles for mobile
                 const card = document.createElement('div');
                 card.className = 'bubble-card';
                 card.innerHTML = `<img src="${image.src}" alt="${image.title}" loading="lazy">`;
@@ -344,8 +360,10 @@
 
                 card.addEventListener('mouseenter', () => {
                     gsap.getTweensOf(card)[0].pause();
+                    gsap.to(card, { scale: 1.2, duration: 0.4, ease: 'back.out(1.7)' });
                 });
                 card.addEventListener('mouseleave', () => {
+                    gsap.to(card, { scale: 1, duration: 0.4, ease: 'back.in(1.7)' });
                     gsap.getTweensOf(card)[0].resume();
                 });
             });
@@ -457,17 +475,12 @@
             let isPlaying = false;
 
             function toggleMusic() {
-                // We need a user interaction to start audio playback reliably.
                 const playPromise = audioPlayer.play();
-
                 if (playPromise !== undefined) {
                     playPromise.then(_ => {
-                        // Autoplay started!
                         isPlaying = true;
                         musicIcon.classList.remove('fa-play');
                         musicIcon.classList.add('fa-pause');
-                        
-                        // Now set up the actual toggle logic
                         musicButton.onclick = () => {
                             if (audioPlayer.paused) {
                                 audioPlayer.play();
@@ -480,8 +493,6 @@
                             }
                         };
                     }).catch(error => {
-                        // Autoplay was prevented.
-                        // We'll just set up the click listener to try playing on the first click.
                         musicButton.onclick = toggleMusic;
                     });
                 }
@@ -491,19 +502,17 @@
         }
 
         // --- INITIALIZATION ---
-        // UPDATED: Use window.onload to ensure all assets are loaded before starting animations.
         window.addEventListener('load', () => {
             const preloader = document.getElementById('preloader');
             
             gsap.to(preloader, {
                 opacity: 0,
                 duration: 1.5,
-                delay: 0.5, // A short delay to let the Lottie animation play a bit
+                delay: 0.5, 
                 ease: 'power2.out',
                 onComplete: () => {
                     preloader.style.display = 'none';
                     
-                    // Now that the page is visible, run all setups
                     setupPageAnimations();
                     setupBubbleGallery();
                     setupMusicPlayer();
@@ -514,6 +523,20 @@
                     }
                 }
             });
+        });
+        
+        // --- RESIZE HANDLER ---
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                // Kill all GSAP animations to prevent conflicts
+                gsap.globalTimeline.clear();
+                // Re-initialize the bubble gallery with new dimensions
+                setupBubbleGallery();
+                // Re-initialize page animations for new screen size
+                setupPageAnimations();
+            }, 250); // Debounce resize event
         });
 
     </script>
