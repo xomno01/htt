@@ -14,16 +14,34 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0f0f0f;
+            background-color: #0a0a0a;
             color: #e0e0e0;
             overflow-x: hidden;
-            cursor: none;
-            background-image: url('https://i.ibb.co/KcNZwTvQ/495435662-122176251986325184-8031789369453146819-n.jpg');
+            cursor: auto; 
+        }
+        .main-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Background will be set by JS */
             background-size: cover;
             background-position: center center;
             background-attachment: fixed;
-            background-repeat: no-repeat;
+            z-index: -2;
+            transition: background-image 1s ease-in-out;
         }
+        .main-background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: -1;
+        }
+
         .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #222; }
@@ -31,38 +49,37 @@
         ::-webkit-scrollbar-thumb:hover { background: #555; }
 
         .hero-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
-        .hero-section-bg {
-            background-image: url('https://i.ibb.co/Z94D0Rk/496097891-122176252226325184-62610792435056189-n.jpg');
-            background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat;
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 1;
-        }
-        .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 0; }
-
-        .gradient-button { background: linear-gradient(45deg, #ef4444, #dc2626); transition: all 0.3s ease-in-out; }
+        
+        .gradient-button { background: linear-gradient(45deg, #ef4444, #dc2626); transition: all 0.3s ease-in-out; display: inline-block; }
         .gradient-button:hover { background: linear-gradient(45deg, #dc2626, #b91c1c); transform: scale(1.05); }
-        .card-3d-hover { transform-style: preserve-3d; transition: transform 0.3s ease-out; }
-        .card-3d-hover:hover { transform: rotateY(5deg) rotateX(5deg) translateZ(10px); }
-        .spinner { border: 4px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top: 4px solid #fff; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-left: 8px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #cursor-trail { position: fixed; width: 10px; height: 10px; background-color: rgba(255, 255, 255, 0.5); border-radius: 50%; pointer-events: none; z-index: 9999; opacity: 0; transform: translate(-50%, -50%); }
+        
+        .glass-card {
+            background-color: rgba(15, 23, 42, 0.3);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .glass-card:hover {
+            background-color: rgba(15, 23, 42, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        #cursor-trail { position: fixed; width: 10px; height: 10px; background-color: rgba(255, 255, 255, 0.5); border-radius: 50%; pointer-events: none; z-index: 9999; opacity: 0; transform: translate(-50%, -50%); display: none; }
 
         #gallery-bubble-container {
             position: relative;
             width: 100%;
-            height: 500px; /* Adjusted height for better mobile view */
+            height: 500px;
             margin-top: 2rem;
             overflow: hidden;
             border-radius: 1rem;
-            background: rgba(15, 15, 15, 0.3);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.1);
         }
         @media (min-width: 768px) {
             #gallery-bubble-container {
                 height: 650px;
             }
         }
-
 
         .bubble-card {
             position: absolute;
@@ -127,21 +144,57 @@
         }
         #lightbox-close:hover { transform: scale(1.2) rotate(90deg); color: #ef4444; }
 
+        /* Survivor Log Styles */
+        #survivor-log-output {
+            font-family: 'Courier New', Courier, monospace;
+            color: #39FF14; /* Neon green */
+            text-shadow: 0 0 5px #39FF14, 0 0 10px #39FF14;
+        }
+        .typing-cursor {
+            display: inline-block;
+            background-color: #39FF14;
+            width: 10px;
+            height: 1.2em;
+            animation: blink 1s step-end infinite;
+            box-shadow: 0 0 5px #39FF14, 0 0 10px #39FF14;
+        }
+        @keyframes blink {
+            from, to { background-color: transparent }
+            50% { background-color: #39FF14; }
+        }
+
+        /* UPDATED: Unstable Text Effect */
+        .unstable-text {
+            display: inline-block; /* Important for transforms */
+            animation: unstable-anim 6s ease-in-out infinite;
+        }
+        @keyframes unstable-anim {
+            0% { transform: translateY(0) skew(0deg, 0deg); }
+            25% { transform: translateY(-8px) skew(-3deg, -1deg); }
+            50% { transform: translateY(0px) skew(0deg, 0deg); }
+            75% { transform: translateY(8px) skew(3deg, 1deg); }
+            100% { transform: translateY(0) skew(0deg, 0deg); }
+        }
+
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased opacity-0 transition-opacity duration-500">
 
     <!-- Preloader Element -->
     <div id="preloader" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/90 backdrop-blur-sm">
         <dotlottie-wc src="https://lottie.host/4f3a4b4a-dc5e-4b81-ac62-0b7608e8e0eb/8ffk8U9vkz.lottie" style="width: 300px;height: 300px" speed="1" autoplay loop></dotlottie-wc>
     </div>
 
-    <div id="cursor-trail" class="hidden md:block"></div>
+    <!-- Background Elements -->
+    <div class="main-background"></div>
+    <div class="main-background-overlay"></div>
 
-    <!-- Header and other sections remain the same -->
-    <header class="absolute top-0 left-0 w-full p-4 md:p-6 z-20 opacity-0" id="main-header">
+    <div id="cursor-trail"></div>
+
+    <!-- Header -->
+    <header class="absolute top-0 left-0 w-full p-4 md:p-6 z-20" id="main-header">
         <div class="container flex justify-between items-center">
-            <a href="#" class="text-xl md:text-2xl font-bold text-white hover:text-red-400 transition-colors duration-300 header-link">Kỷ Nguyên Mới</a>
+            <a href="#" class="text-xl md:text-2xl font-bold text-red-500 hover:text-red-400 transition-colors duration-300 header-link">Kỷ Nguyên Mới</a>
             <nav>
                 <button class="menu-btn bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105 text-sm md:text-base">
                     <span>Menu</span>
@@ -150,66 +203,68 @@
         </div>
     </header>
 
+    <!-- Hero Section -->
     <section class="relative h-screen flex items-center justify-center text-center overflow-hidden">
-        <div class="hero-section-bg" id="hero-bg-layer"></div>
-        <div class="hero-overlay"></div>
         <div class="hero-content z-10 p-4">
-            <h1 class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold mb-4 md:mb-6 leading-tight text-white opacity-0 floating-element" id="hero-title">
-                Bình Minh Mới. <span class="text-red-400">Cuộc Đời Mới.</span>
+            <h1 class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold mb-4 md:mb-6 leading-tight text-white" id="hero-title">
+                Bình Minh Mới. 
+                <!-- UPDATED: Class changed for new effect -->
+                <span class="text-red-400 unstable-text">Cuộc Đời Mới.</span>
             </h1>
-            <p class="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 md:mb-10 text-gray-300 opacity-0" id="hero-subtitle">
+            <p class="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 md:mb-10 text-gray-300" id="hero-subtitle">
                 Trong đống đổ nát, chúng ta kiến tạo tương lai.
             </p>
-            <button class="hero-cta gradient-button text-white font-bold py-3 px-6 md:py-4 md:px-8 rounded-full shadow-lg transform transition duration-300 ease-in-out opacity-0" id="hero-cta">
-                Khám Phá Cộng Đồng
-            </button>
+            <a href="https://facebook.com/luu.van.621914" target="_blank" rel="noopener noreferrer" class="hero-cta gradient-button text-white font-bold py-3 px-6 md:py-4 md:px-8 rounded-full shadow-lg transform transition duration-300 ease-in-out" id="hero-cta">
+                Khám Phá
+            </a>
         </div>
     </section>
 
-    <section class="py-16 md:py-20 bg-transparent text-center">
+    <!-- Features Section -->
+    <section class="py-16 md:py-20 text-center">
         <div class="container">
             <h2 class="text-3xl md:text-5xl font-bold mb-12 md:mb-16 text-white" id="features-title">Những Trụ Cột Của Sự Sống</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-                <!-- Features items are already responsive -->
-                <div class="feature-item p-6 md:p-8 bg-gray-800 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
+                <div class="feature-item p-6 md:p-8 rounded-xl shadow-lg glass-card">
                     <div class="text-red-400 text-4xl md:text-5xl mb-6"><i class="fas fa-hammer mx-auto"></i></div>
                     <h3 class="text-xl md:text-2xl font-semibold mb-4 text-white">Tái Thiết Bền Vững</h3>
-                    <p class="text-gray-400 feature-text">Xây dựng lại từ tro tàn với công nghệ thích nghi.</p>
+                    <p class="text-gray-300 feature-text">Xây dựng lại từ tro tàn với công nghệ thích nghi.</p>
                 </div>
-                <div class="feature-item p-6 md:p-8 bg-gray-800 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
+                <div class="feature-item p-6 md:p-8 rounded-xl shadow-lg glass-card">
                     <div class="text-red-400 text-4xl md:text-5xl mb-6"><i class="fas fa-shield-alt mx-auto"></i></div>
                     <h3 class="text-xl md:text-2xl font-semibold mb-4 text-white">Hệ Thống An Toàn</h3>
-                    <p class="text-gray-400 feature-text">Bảo vệ bạn khỏi mọi hiểm nguy trong thế giới mới.</p>
+                    <p class="text-gray-300 feature-text">Bảo vệ bạn khỏi mọi hiểm nguy trong thế giới mới.</p>
                 </div>
-                <div class="feature-item p-6 md:p-8 bg-gray-800 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
+                <div class="feature-item p-6 md:p-8 rounded-xl shadow-lg glass-card">
                     <div class="text-red-400 text-4xl md:text-5xl mb-6"><i class="fas fa-users mx-auto"></i></div>
                     <h3 class="text-xl md:text-2xl font-semibold mb-4 text-white">Kết Nối Cộng Đồng</h3>
-                    <p class="text-gray-400 feature-text">Sức mạnh nằm ở sự đoàn kết và hỗ trợ lẫn nhau.</p>
+                    <p class="text-gray-300 feature-text">Sức mạnh nằm ở sự đoàn kết và hỗ trợ lẫn nhau.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-16 md:py-20 bg-transparent">
+    <!-- Gallery Section -->
+    <section class="py-16 md:py-20">
         <div class="container">
-            <h2 class="text-3xl md:text-5xl font-bold mb-8 text-white text-center" id="gallery-title">Ký Ức Trôi Nổi</h2>
-            <p class="text-center text-gray-400 mb-8 max-w-2xl mx-auto">Chạm vào những ký ức trôi nổi để khám phá. Nhấp vào một bong bóng để xem chi tiết.</p>
-            <div id="gallery-bubble-container">
+            <h2 class="text-3xl md:text-5xl font-bold mb-8 text-white text-center" id="gallery-title">Ký Ức Lang Thang</h2>
+            <p class="text-center text-gray-300 mb-8 max-w-2xl mx-auto">Chạm vào những ký ức trôi nổi để khám phá. Nhấp vào một bong bóng để xem chi tiết.</p>
+            <div id="gallery-bubble-container" class="glass-card">
                 <!-- Bubble cards will be dynamically added here by JS -->
             </div>
         </div>
     </section>
 
-    <section class="py-16 md:py-20 bg-transparent text-center">
+    <!-- Testimonials Section -->
+    <section class="py-16 md:py-20 text-center">
         <div class="container">
             <h2 class="text-3xl md:text-5xl font-bold mb-12 md:mb-16 text-white" id="testimonials-title">Tiếng Vọng Từ Kỷ Nguyên Mới</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-                 <!-- Testimonials are already responsive -->
-                <div class="testimonial-item p-6 md:p-8 bg-gray-700 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
+                <div class="testimonial-item p-6 md:p-8 rounded-xl shadow-lg glass-card">
                     <p class="text-base md:text-lg italic mb-6 text-gray-300 testimonial-text">"Nhờ có [Cộng đồng XYZ], chúng tôi đã tìm thấy hy vọng và nơi trú ẩn an toàn."</p>
                     <p class="font-semibold text-white testimonial-author">- Người Sống Sót, Vùng Đất Hoang</p>
                 </div>
-                <div class="testimonial-item p-6 md:p-8 bg-gray-700 rounded-xl shadow-lg transform translate-y-10 opacity-0 card-3d-hover">
+                <div class="testimonial-item p-6 md:p-8 rounded-xl shadow-lg glass-card">
                     <p class="text-base md:text-lg italic mb-6 text-gray-300 testimonial-text">"Sự kiên cường và tinh thần đồng đội ở đây là nguồn cảm hứng bất tận."</p>
                     <p class="font-semibold text-white testimonial-author">- Thủ Lĩnh, Khu Vực An Toàn</p>
                 </div>
@@ -217,25 +272,20 @@
         </div>
     </section>
 
-    <section class="py-16 md:py-20 bg-transparent text-center">
+    <!-- Survivor's Diary Section -->
+    <section class="py-16 md:py-20 text-center">
         <div class="container">
-            <h2 class="text-3xl md:text-5xl font-bold mb-12 md:mb-16 text-white" id="gemini-feature-title">✨ Lời Khuyên Sinh Tồn ✨</h2>
-            <p class="text-base md:text-lg lg:text-xl mb-8 text-gray-300 gemini-intro-text">
-                Nhận một mẹo hữu ích để sống sót trong thế giới hậu tận thế.
-            </p>
-            <button id="generate-tip-btn" class="gradient-button text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105 flex items-center justify-center mx-auto mb-10">
-                Tạo Mẹo Sinh Tồn
-                <span id="spinner" class="spinner hidden"></span>
-            </button>
-            <div id="survival-tip-output" class="p-6 md:p-8 bg-gray-800 rounded-xl shadow-lg max-w-2xl mx-auto text-base md:text-lg italic text-gray-300 min-h-[100px] flex items-center justify-center text-center">
-                Nhấp vào nút để nhận lời khuyên đầu tiên của bạn!
+            <h2 class="text-3xl md:text-5xl font-bold mb-12 md:mb-16 text-white" id="survivor-log-title">Nhật Ký Kẻ Sống Sót</h2>
+            <div id="survivor-log-output" class="p-6 md:p-8 rounded-xl shadow-lg max-w-3xl mx-auto text-left text-base md:text-lg min-h-[150px] glass-card">
+                <span id="log-text"></span><span class="typing-cursor"></span>
             </div>
         </div>
     </section>
 
-    <footer class="py-10 bg-gray-950 text-gray-400 text-center text-sm opacity-0" id="main-footer">
+    <!-- Footer -->
+    <footer class="py-10 text-gray-400 text-center text-sm" id="main-footer">
         <div class="container">
-            <p>&copy; 2025 Kỷ Nguyên Mới. Mọi quyền được bảo reserved.</p>
+            <p>&copy; 2025 Kỷ Nguyên Mới. Made by <a href="https://facebook.com/luu.van.621914" target="_blank" rel="noopener noreferrer" class="underline hover:text-white">Lưu Vân</a>.</p>
         </div>
     </footer>
 
@@ -273,65 +323,70 @@
         ];
 
         // --- CUSTOM CURSOR ---
-        const cursorTrail = document.getElementById('cursor-trail');
-        // Hide cursor on touch devices
-        if (!('ontouchstart' in window)) {
-            gsap.set(cursorTrail, { xPercent: -50, yPercent: -50 });
-            window.addEventListener('mousemove', (e) => {
-                gsap.to(cursorTrail, { x: e.clientX, y: e.clientY, duration: 0.3, ease: "power2.out", opacity: 1 });
-            });
-            window.addEventListener('mouseleave', () => gsap.to(cursorTrail, { opacity: 0, duration: 0.5 }));
-        } else {
-             document.body.style.cursor = 'auto'; // Show default cursor on touch devices
+        function setupCustomCursor() {
+            const cursorTrail = document.getElementById('cursor-trail');
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            if (!isTouchDevice) {
+                document.body.style.cursor = 'none';
+                cursorTrail.style.display = 'block';
+                gsap.set(cursorTrail, { xPercent: -50, yPercent: -50 });
+                window.addEventListener('mousemove', (e) => {
+                    gsap.to(cursorTrail, { x: e.clientX, y: e.clientY, duration: 0.3, ease: "power2.out", opacity: 1 });
+                });
+                window.addEventListener('mouseleave', () => gsap.to(cursorTrail, { opacity: 0, duration: 0.5 }));
+            }
         }
-
 
         // --- GSAP PAGE ANIMATIONS ---
         function setupPageAnimations() {
+            gsap.killTweensOf(['#main-header', '#hero-title', '#hero-subtitle', '#hero-cta', '.feature-item', '.testimonial-item', '#survivor-log-title', '#survivor-log-output', '#main-footer']);
+
             gsap.fromTo("#main-header", { y: -50, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "power3.out", delay: 0.2 });
             gsap.fromTo("#hero-title", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" });
             gsap.fromTo("#hero-subtitle", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, delay: 0.3, ease: "power3.out" });
             gsap.fromTo("#hero-cta", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 1, delay: 0.6, ease: "back.out(1.7)" });
-            gsap.to(".floating-element", { y: -10, x: 5, rotation: 2, repeat: -1, yoyo: true, duration: 3, ease: "sine.inOut" });
-            gsap.to(".hero-content", { yPercent: -10, ease: "none", scrollTrigger: { trigger: ".hero-section-bg", start: "top top", end: "bottom top", scrub: 0.5 } });
-            gsap.to("#hero-bg-layer", { opacity: 0, ease: "none", scrollTrigger: { trigger: ".hero-section-bg", start: "center center", end: "bottom top", scrub: 1 } });
-
-            const sections = gsap.utils.toArray('section:not(:nth-child(3))');
-            sections.forEach(section => {
-                const title = section.querySelector('h2');
-                const items = section.querySelectorAll('.feature-item, .testimonial-item, .dynamic-form, .gemini-intro-text, #generate-tip-btn, #survival-tip-output');
-                if (title) {
-                    gsap.from(title, { y: 50, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: title, start: "top 85%", toggleActions: "play none none none" } });
-                }
-                if (items.length > 0) {
-                     gsap.from(items, { y: 50, opacity: 0, duration: 1, ease: "power3.out", stagger: 0.15, scrollTrigger: { trigger: section, start: "top 80%", toggleActions: "play none none none" } });
-                }
-            });
             
-            gsap.fromTo("#main-footer", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "power3.out", scrollTrigger: { trigger: "#main-footer", start: "top 95%", toggleActions: "play none none none" } });
+            const animatedSections = gsap.utils.toArray('.feature-item, .testimonial-item, #gallery-bubble-container, #survivor-log-title, #survivor-log-output, #main-footer');
+            animatedSections.forEach(elem => {
+                gsap.from(elem, {
+                    y: 50,
+                    opacity: 0,
+                    duration: 1,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: elem,
+                        start: 'top 85%',
+                        toggleActions: 'play none none none'
+                    }
+                });
+            });
         }
 
         // --- FLOATING BUBBLES GALLERY & LIGHTBOX LOGIC ---
         function setupBubbleGallery() {
             const container = document.getElementById('gallery-bubble-container');
+            if (!container) return;
+
+            gsap.killTweensOf(".bubble-card");
+            container.innerHTML = '';
+
             const lightbox = document.getElementById('lightbox');
             const lightboxImg = document.getElementById('lightbox-img');
             const lightboxClose = document.getElementById('lightbox-close');
             const lightboxNext = document.getElementById('lightbox-next');
             const lightboxPrev = document.getElementById('lightbox-prev');
-
-            if (!container) return;
             
             let containerWidth = container.offsetWidth;
             let containerHeight = container.offsetHeight;
             let currentIndex = 0;
             let slideshowTimer = null;
+            
+            const isMobile = window.innerWidth < 768;
+            const numBubbles = isMobile ? 7 : galleryImages.length;
+            const imagesToShow = galleryImages.slice(0, numBubbles);
 
-            // Clear any existing bubbles before creating new ones (for resize)
-            container.innerHTML = '';
-
-            galleryImages.forEach((image, index) => {
-                const bubbleSize = Math.random() * 80 + 60; // Slightly smaller bubbles for mobile
+            imagesToShow.forEach((image, index) => {
+                const bubbleSize = isMobile ? (Math.random() * 40 + 50) : (Math.random() * 80 + 60);
                 const card = document.createElement('div');
                 card.className = 'bubble-card';
                 card.innerHTML = `<img src="${image.src}" alt="${image.title}" loading="lazy">`;
@@ -359,12 +414,12 @@
                 wander(card);
 
                 card.addEventListener('mouseenter', () => {
-                    gsap.getTweensOf(card)[0].pause();
+                    gsap.getTweensOf(card).forEach(tween => tween.pause());
                     gsap.to(card, { scale: 1.2, duration: 0.4, ease: 'back.out(1.7)' });
                 });
                 card.addEventListener('mouseleave', () => {
                     gsap.to(card, { scale: 1, duration: 0.4, ease: 'back.in(1.7)' });
-                    gsap.getTweensOf(card)[0].resume();
+                    gsap.getTweensOf(card).forEach(tween => tween.resume());
                 });
             });
 
@@ -381,11 +436,11 @@
             };
 
             const showImage = (index, isAuto = false) => {
-                currentIndex = (index + galleryImages.length) % galleryImages.length;
+                currentIndex = (index + imagesToShow.length) % imagesToShow.length;
                 gsap.to(lightboxImg, {
                     opacity: 0, duration: 0.3, ease: 'power2.in',
                     onComplete: () => {
-                        lightboxImg.src = galleryImages[currentIndex].src;
+                        lightboxImg.src = imagesToShow[currentIndex].src;
                         gsap.to(lightboxImg, { opacity: 1, duration: 0.4, ease: 'power2.out' });
                     }
                 });
@@ -398,7 +453,7 @@
             cards.forEach(card => {
                 card.addEventListener('click', () => {
                     currentIndex = parseInt(card.dataset.index);
-                    lightboxImg.src = galleryImages[currentIndex].src;
+                    lightboxImg.src = imagesToShow[currentIndex].src;
                     lightbox.classList.add('visible');
                     startSlideshow();
                 });
@@ -422,41 +477,47 @@
             });
         }
         
-        // --- GEMINI API INTEGRATION ---
-        async function generateSurvivalTip() {
-            const outputDiv = document.getElementById('survival-tip-output');
-            const generateBtn = document.getElementById('generate-tip-btn');
-            const spinner = document.getElementById('spinner');
+        // --- SURVIVOR LOG LOGIC ---
+        function setupSurvivorLog() {
+            const logTextElement = document.getElementById('log-text');
+            if (!logTextElement) return;
 
-            outputDiv.textContent = 'Đang tạo lời khuyên...';
-            generateBtn.disabled = true;
-            spinner.classList.remove('hidden');
+            const logEntries = [
+                "Ngày 34. Nước uống lại sắp cạn. Phải di chuyển về phía đông vào rạng sáng...",
+                "Nghe thấy tiếng động lạ đêm qua. Giống như tiếng kim loại bị kéo lê. Không dám ra xem.",
+                "Tìm thấy một hộp đồ ăn còn nguyên. Một bữa no hiếm hoi. Hy vọng không bị nhiễm xạ.",
+                "Bão bụi lại đến. Tầm nhìn bằng không. Chỉ có thể ở yên trong hầm trú ẩn và chờ đợi.",
+                "Tín hiệu radio yếu ớt từ phía nam. Chỉ là tiếng nhiễu, hay còn ai đó ngoài kia?",
+                "Bầu trời hôm nay có màu đỏ kỳ lạ. Cảm giác không lành...",
+                "Dấu chân lạ gần khu trú ẩn. Không phải của người. Lớn hơn... và sâu hơn.",
+                "Đêm nay trăng tròn. Những tiếng hú vang vọng từ phía thành phố đổ nát. Chúng đang săn mồi.",
+                "Đổi được vài viên đạn lấy một ít nước sạch từ một thương nhân lang thang. Ông ta trông còn mệt mỏi hơn cả tôi.",
+                "Sửa lại chiếc radio cũ. Chỉ mong nghe được một giọng nói, một dấu hiệu của sự sống khác.",
+                "Mưa axit. Mùi hăng nồng trong không khí. Phải ở trong này thêm ít nhất hai ngày nữa.",
+                "Một bông hoa dại mọc lên từ kẽ nứt bê tông. Lần cuối tôi thấy một thứ đẹp đẽ như vậy là khi nào?"
+            ];
 
-            const prompt = "Hãy đưa ra một lời khuyên sinh tồn ngắn gọn và thực tế cho một thế giới hậu tận thế. Lời khuyên nên tập trung vào một khía cạnh cụ thể như tìm kiếm tài nguyên, an toàn, hoặc kỹ năng sinh tồn. Chỉ trả lời lời khuyên, không có lời giới thiệu hay kết thúc.";
-            const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
-            const apiKey = "";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-
-                if (result.candidates && result.candidates[0]?.content?.parts[0]?.text) {
-                    outputDiv.textContent = result.candidates[0].content.parts[0].text;
+            let currentEntryIndex = 0;
+            let currentCharIndex = 0;
+            
+            function typeLog() {
+                if (currentCharIndex < logEntries[currentEntryIndex].length) {
+                    logTextElement.textContent += logEntries[currentEntryIndex].charAt(currentCharIndex);
+                    currentCharIndex++;
+                    setTimeout(typeLog, 50); // Typing speed
                 } else {
-                    outputDiv.textContent = 'Không thể tạo lời khuyên. Vui lòng thử lại.';
+                    setTimeout(nextLogEntry, 4000); // Pause between entries
                 }
-            } catch (error) {
-                console.error("Gemini API Error:", error);
-                outputDiv.textContent = 'Đã xảy ra lỗi khi kết nối API. Vui lòng thử lại sau.';
-            } finally {
-                generateBtn.disabled = false;
-                spinner.classList.add('hidden');
             }
+
+            function nextLogEntry() {
+                currentEntryIndex = (currentEntryIndex + 1) % logEntries.length;
+                currentCharIndex = 0;
+                logTextElement.textContent = '';
+                typeLog();
+            }
+
+            typeLog();
         }
         
         // --- MUSIC PLAYER LOGIC ---
@@ -472,71 +533,85 @@
             const chosenMusic = musicSources[Math.floor(Math.random() * musicSources.length)];
             audioPlayer.src = chosenMusic;
 
-            let isPlaying = false;
-
-            function toggleMusic() {
-                const playPromise = audioPlayer.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(_ => {
-                        isPlaying = true;
-                        musicIcon.classList.remove('fa-play');
-                        musicIcon.classList.add('fa-pause');
-                        musicButton.onclick = () => {
-                            if (audioPlayer.paused) {
-                                audioPlayer.play();
-                                musicIcon.classList.remove('fa-play');
-                                musicIcon.classList.add('fa-pause');
-                            } else {
-                                audioPlayer.pause();
-                                musicIcon.classList.remove('fa-pause');
-                                musicIcon.classList.add('fa-play');
-                            }
-                        };
-                    }).catch(error => {
-                        musicButton.onclick = toggleMusic;
-                    });
+            const updateIcon = () => {
+                if (audioPlayer.paused) {
+                    musicIcon.classList.replace('fa-pause', 'fa-play');
+                } else {
+                    musicIcon.classList.replace('fa-play', 'fa-pause');
                 }
-            }
+            };
+
+            const attemptAutoplay = () => {
+                audioPlayer.play().catch(error => {
+                    console.log("Autoplay prevented. User interaction is needed.");
+                });
+            };
+
+            musicButton.addEventListener('click', () => {
+                if (audioPlayer.paused) {
+                    audioPlayer.play();
+                } else {
+                    audioPlayer.pause();
+                }
+            });
+
+            audioPlayer.onplay = updateIcon;
+            audioPlayer.onpause = updateIcon;
             
-            musicButton.addEventListener('click', toggleMusic, { once: true });
+            // Attempt to play after a short delay once the page is interactive
+            setTimeout(attemptAutoplay, 1000);
         }
 
-        // --- INITIALIZATION ---
-        window.addEventListener('load', () => {
-            const preloader = document.getElementById('preloader');
+        // --- Random Background Logic ---
+        function setRandomBackground() {
+            const bgElement = document.querySelector('.main-background');
+            if (!bgElement || !galleryImages || galleryImages.length === 0) return;
+
+            const randomIndex = Math.floor(Math.random() * galleryImages.length);
+            const randomImageUrl = galleryImages[randomIndex].src;
             
+            bgElement.style.backgroundImage = `url('${randomImageUrl}')`;
+        }
+
+        // --- INITIALIZATION & PRELOADER LOGIC ---
+        function runAllSetups() {
+            setRandomBackground();
+            setupCustomCursor();
+            setupPageAnimations();
+            setupBubbleGallery();
+            setupMusicPlayer();
+            setupSurvivorLog();
+        }
+
+        let pageLoaded = false;
+        function hidePreloader() {
+            if (pageLoaded) return;
+            pageLoaded = true;
+
+            const preloader = document.getElementById('preloader');
             gsap.to(preloader, {
                 opacity: 0,
-                duration: 1.5,
-                delay: 0.5, 
+                duration: 1,
                 ease: 'power2.out',
                 onComplete: () => {
                     preloader.style.display = 'none';
-                    
-                    setupPageAnimations();
-                    setupBubbleGallery();
-                    setupMusicPlayer();
-
-                    const generateBtn = document.getElementById('generate-tip-btn');
-                    if (generateBtn) {
-                        generateBtn.addEventListener('click', generateSurvivalTip);
-                    }
+                    gsap.to('body', { opacity: 1, duration: 0.5 });
+                    runAllSetups();
                 }
             });
-        });
+        }
+
+        window.addEventListener('load', hidePreloader);
+        setTimeout(hidePreloader, 10000); 
+
         
         // --- RESIZE HANDLER ---
         let resizeTimeout;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
-                // Kill all GSAP animations to prevent conflicts
-                gsap.globalTimeline.clear();
-                // Re-initialize the bubble gallery with new dimensions
                 setupBubbleGallery();
-                // Re-initialize page animations for new screen size
-                setupPageAnimations();
-            }, 250); // Debounce resize event
+            }, 250);
         });
 
     </script>
