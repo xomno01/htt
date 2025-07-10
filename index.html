@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Lottie Player Script -->
     <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module"></script>
@@ -163,9 +164,8 @@
             50% { background-color: #39FF14; }
         }
 
-        /* UPDATED: Unstable Text Effect */
         .unstable-text {
-            display: inline-block; /* Important for transforms */
+            display: inline-block;
             animation: unstable-anim 6s ease-in-out infinite;
         }
         @keyframes unstable-anim {
@@ -174,6 +174,22 @@
             50% { transform: translateY(0px) skew(0deg, 0deg); }
             75% { transform: translateY(8px) skew(3deg, 1deg); }
             100% { transform: translateY(0) skew(0deg, 0deg); }
+        }
+
+        /* NEW: Newspaper Canvas Container */
+        #newspaper-container {
+            position: relative;
+            width: 100%;
+            height: 450px; /* Adjust height as needed */
+            margin-top: -2rem; /* Pull it up a bit */
+            margin-bottom: -2rem;
+        }
+        #newspaper-container canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
 
     </style>
@@ -208,7 +224,6 @@
         <div class="hero-content z-10 p-4">
             <h1 class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold mb-4 md:mb-6 leading-tight text-white" id="hero-title">
                 Bình Minh Mới. 
-                <!-- UPDATED: Class changed for new effect -->
                 <span class="text-red-400 unstable-text">Cuộc Đời Mới.</span>
             </h1>
             <p class="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 md:mb-10 text-gray-300" id="hero-subtitle">
@@ -220,26 +235,12 @@
         </div>
     </section>
 
-    <!-- Features Section -->
+    <!-- NEW: Newspaper Debris Section -->
     <section class="py-16 md:py-20 text-center">
         <div class="container">
-            <h2 class="text-3xl md:text-5xl font-bold mb-12 md:mb-16 text-white" id="features-title">Những Trụ Cột Của Sự Sống</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-                <div class="feature-item p-6 md:p-8 rounded-xl shadow-lg glass-card">
-                    <div class="text-red-400 text-4xl md:text-5xl mb-6"><i class="fas fa-hammer mx-auto"></i></div>
-                    <h3 class="text-xl md:text-2xl font-semibold mb-4 text-white">Tái Thiết Bền Vững</h3>
-                    <p class="text-gray-300 feature-text">Xây dựng lại từ tro tàn với công nghệ thích nghi.</p>
-                </div>
-                <div class="feature-item p-6 md:p-8 rounded-xl shadow-lg glass-card">
-                    <div class="text-red-400 text-4xl md:text-5xl mb-6"><i class="fas fa-shield-alt mx-auto"></i></div>
-                    <h3 class="text-xl md:text-2xl font-semibold mb-4 text-white">Hệ Thống An Toàn</h3>
-                    <p class="text-gray-300 feature-text">Bảo vệ bạn khỏi mọi hiểm nguy trong thế giới mới.</p>
-                </div>
-                <div class="feature-item p-6 md:p-8 rounded-xl shadow-lg glass-card">
-                    <div class="text-red-400 text-4xl md:text-5xl mb-6"><i class="fas fa-users mx-auto"></i></div>
-                    <h3 class="text-xl md:text-2xl font-semibold mb-4 text-white">Kết Nối Cộng Đồng</h3>
-                    <p class="text-gray-300 feature-text">Sức mạnh nằm ở sự đoàn kết và hỗ trợ lẫn nhau.</p>
-                </div>
+            <h2 class="text-3xl md:text-5xl font-bold text-white" id="newspaper-title">Tàn Tích Của Một Thế Giới</h2>
+            <div id="newspaper-container">
+                <!-- Three.js canvas will be injected here -->
             </div>
         </div>
     </section>
@@ -346,7 +347,7 @@
             gsap.fromTo("#hero-subtitle", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, delay: 0.3, ease: "power3.out" });
             gsap.fromTo("#hero-cta", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 1, delay: 0.6, ease: "back.out(1.7)" });
             
-            const animatedSections = gsap.utils.toArray('.feature-item, .testimonial-item, #gallery-bubble-container, #survivor-log-title, #survivor-log-output, #main-footer');
+            const animatedSections = gsap.utils.toArray('.feature-item, .testimonial-item, #gallery-bubble-container, #survivor-log-title, #survivor-log-output, #main-footer, #newspaper-title');
             animatedSections.forEach(elem => {
                 gsap.from(elem, {
                     y: 50,
@@ -558,7 +559,6 @@
             audioPlayer.onplay = updateIcon;
             audioPlayer.onpause = updateIcon;
             
-            // Attempt to play after a short delay once the page is interactive
             setTimeout(attemptAutoplay, 1000);
         }
 
@@ -572,12 +572,100 @@
             
             bgElement.style.backgroundImage = `url('${randomImageUrl}')`;
         }
+        
+        // --- NEW: Newspaper Debris Scene ---
+        function setupNewspaperScene() {
+            const container = document.getElementById('newspaper-container');
+            if (!container) return;
+
+            // Scene setup
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            camera.position.z = 10;
+
+            const papers = [];
+            const loader = new THREE.TextureLoader();
+            const paperTextures = [
+                'https://i.ibb.co/yVb1kS3/newspaper-texture-1.jpg',
+                'https://i.ibb.co/zJqf9gq/newspaper-texture-2.jpg',
+                'https://i.ibb.co/yFkYpWd/newspaper-texture-3.jpg'
+            ];
+
+            const paperGeometry = new THREE.PlaneGeometry(4, 5.5); // Aspect ratio of a newspaper
+
+            for (let i = 0; i < 15; i++) {
+                const texture = loader.load(paperTextures[i % paperTextures.length]);
+                const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, transparent: true, opacity: 0.8 });
+                const paper = new THREE.Mesh(paperGeometry, material);
+
+                paper.position.set(
+                    (Math.random() - 0.5) * 25,
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 15
+                );
+
+                paper.rotation.set(
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI
+                );
+
+                paper.userData.rotationSpeed = {
+                    x: (Math.random() - 0.5) * 0.01,
+                    y: (Math.random() - 0.5) * 0.01,
+                    z: (Math.random() - 0.5) * 0.01,
+                };
+                
+                paper.userData.driftSpeed = {
+                    x: (Math.random() - 0.5) * 0.02,
+                    y: (Math.random() - 0.2) * 0.02 - 0.01, // Tend to drift down
+                };
+
+                scene.add(paper);
+                papers.push(paper);
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                papers.forEach(paper => {
+                    paper.rotation.x += paper.userData.rotationSpeed.x;
+                    paper.rotation.y += paper.userData.rotationSpeed.y;
+                    paper.rotation.z += paper.userData.rotationSpeed.z;
+                    
+                    paper.position.x += paper.userData.driftSpeed.x;
+                    paper.position.y += paper.userData.driftSpeed.y;
+
+                    // Reset position if it goes too far out of view
+                    if (paper.position.y < -15) paper.position.y = 15;
+                    if (paper.position.x > 20) paper.position.x = -20;
+                    if (paper.position.x < -20) paper.position.x = 20;
+
+                });
+
+                renderer.render(scene, camera);
+            }
+            animate();
+            
+            // Handle window resize
+            function onWindowResize() {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            }
+            window.addEventListener('resize', onWindowResize, false);
+        }
 
         // --- INITIALIZATION & PRELOADER LOGIC ---
         function runAllSetups() {
             setRandomBackground();
             setupCustomCursor();
             setupPageAnimations();
+            setupNewspaperScene();
             setupBubbleGallery();
             setupMusicPlayer();
             setupSurvivorLog();
